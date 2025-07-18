@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlyEast Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #f0f8ff;
+      color: #000;
+    }
+
+    header {
+      padding: 30px 5%;
+      background-color: white;
+    }
+
+    header h1 {
+      margin-top:25px;
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    header h1 span {
+      color: #ff6b6b;
+    }
+
+    .trip-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .date-selector {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 20px 5%;
+      background-color: white;
+      border-top: 1px solid #ccc;
+    }
+
+    .date-box {
+      text-align: center;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      min-width: 100px;
+    }
+
+    .date-box.active {
+      background-color: #def2ff;
+      border-color: #007bff;
+    }
+
+    .filters {
+      display: flex;
+      gap: 15px;
+      padding: 10px 5%;
+      background-color: #f5faff;
+    }
+
+    .filters button {
+      padding: 8px 14px;
+      background-color: #f0f0f0;
+      border: none;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .flight-list {
+      padding: 20px 5%;
+    }
+
+    .flight-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .flight-details {
+      flex: 1;
+    }
+
+    .flight-details p {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+   .flights-list {
+        list-style: none;
+        padding: 0;
+    }
+    .flights-list li {
+        background: white;
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        text-align: left;
+        border-left: 5px solid #ff6b6b;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+    .flights-list li:hover {
+        transform: translateX(5px);
+    }
+    .price-info {
+      text-align: right;
+    }
+
+    .price-info .price {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .price-info .blu {
+      font-size: 12px;
+      color: #ff6b6b;
+      margin-top: 4px;
+    }
+
+    .fare-hold {
+      text-align: center;
+      background-color: #e6f2ff;
+      padding: 15px;
+      font-size: 14px;
+      margin: 0 5%;
+      border-radius: 8px;
+    }
+
+    .container.hidden {
+      display: none;
+    }
+    
+    .container {
+      display: block;
+      padding: 20px 5%;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="trip-info" id="tripDetails"></div>
+
+    <h1>Choose your preferred flight from <span>Delhi</span> to <span>Mumbai</span></h1>
+  </header>
+
+  <section class="date-selector" id="dateSelector">
+    <!-- Dates will be injected by JS -->
+  </section>
+
+  <div id="flightsPage" class="container hidden">
+    <ul class="flights-list">
+      <li data-from="Kochi, COK" data-to="Mumbai, BOM" onclick="redirectToAirplane(this)">
+        <strong>Flight FE-591</strong><br>
+        Departure: 7:34 AM - Kochi, COK <br>
+        Arrival: 9:08 AM - Mumbai, BOM <br>
+        <div class="price-info">₹${Math.floor(Math.random() * 5000) + 3000}</div>
+      </li>
+      <li data-from="Srinagar, SXR" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)">
+        <strong>Flight FE-791</strong><br>
+        Departure: 12:18 PM - Srinagar, SXR <br>
+        Arrival: 3:30 PM - Coimbatore, CJB <br>
+        <div class="price-info">₹${Math.floor(Math.random() * 5000) + 3000}</div>
+      </li>
+      <li data-from="Ranchi, IXR" data-to="Dehradun, DED" onclick="redirectToAirplane(this)"><strong>Flight AI-562</strong><br>Departure: 12:01 PM - Ranchi, IXR <br>Arrival: 2:04 PM - Dehradun, DED </li>
+      <li data-from="Port Blair, IXZ" data-to="Dehradun, DED" onclick="redirectToAirplane(this)"><strong>Flight SG-170</strong><br>Departure: 1:46 PM - Port Blair, IXZ <br>Arrival: 4:46 PM - Dehradun, DED </li>
+      <li data-from="Patna, PAT" data-to="Chandigarh, IXC" onclick="redirectToAirplane(this)"><strong>Flight SG-898</strong><br>Departure: 9:25 AM - Patna, PAT <br>Arrival: 11:54 AM - Chandigarh, IXC </li>
+      <li data-from="Surat, STV" data-to="Kolkata, CCU" onclick="redirectToAirplane(this)"><strong>Flight 6E-746</strong><br>Departure: 1:43 PM - Surat, STV <br>Arrival: 3:01 PM - Kolkata, CCU </li>
+      <li data-from="Hyderabad, HYD" data-to="Goa, GOI" onclick="redirectToAirplane(this)"><strong>Flight SG-479</strong><br>Departure: 9:29 AM - Hyderabad, HYD <br>Arrival: 11:04 AM - Goa, GOI </li>
+      <li data-from="Indore, IDR" data-to="Ranchi, IXR" onclick="redirectToAirplane(this)"><strong>Flight UK-731</strong><br>Departure: 1:32 PM - Indore, IDR <br>Arrival: 3:08 PM - Ranchi, IXR </li>
+      <li data-from="Kochi, COK" data-to="Srinagar, SXR" onclick="redirectToAirplane(this)"><strong>Flight IX-160</strong><br>Departure: 1:46 PM - Kochi, COK <br>Arrival: 4:12 PM - Srinagar, SXR </li>
+      <li data-from="Ahmedabad, AMD" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)"><strong>Flight UK-658</strong><br>Departure: 9:19 AM - Ahmedabad, AMD <br>Arrival: 11:41 AM - Coimbatore, CJB </li>
+      <li data-from="Varanasi, VNS" data-to="Chandigarh, IXC" onclick="redirectToAirplane(this)"><strong>Flight AI-439</strong><br>Departure: 1:29 PM - Varanasi, VNS <br>Arrival: 3:37 PM - Chandigarh, IXC </li>
+      <li data-from="Lucknow, LKO" data-to="Jaipur, JAI" onclick="redirectToAirplane(this)"><strong>Flight IX-819</strong><br>Departure: 2:57 PM - Lucknow, LKO <br>Arrival: 6:15 PM - Jaipur, JAI </li>
+      <li data-from="Hyderabad, HYD" data-to="Jaipur, JAI" onclick="redirectToAirplane(this)"><strong>Flight AI-814</strong><br>Departure: 10:17 AM - Hyderabad, HYD <br>Arrival: 11:28 AM - Jaipur, JAI </li>
+      <li data-from="Thiruvananthapuram, TRV" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)"><strong>Flight IX-730</strong><br>Departure: 11:23 AM - Thiruvananthapuram, TRV <br>Arrival: 1:07 PM - Coimbatore, CJB </li>
+      <li data-from="Bengaluru, BLR" data-to="Thiruvananthapuram, TRV" onclick="redirectToAirplane(this)"><strong>Flight SG-279</strong><br>Departure: 5:38 AM - Bengaluru, BLR <br>Arrival: 9:10 AM - Thiruvananthapuram, TRV </li>
+      <li data-from="Jaipur, JAI" data-to="Varanasi, VNS" onclick="redirectToAirplane(this)"><strong>Flight IX-478</strong><br>Departure: 2:32 PM - Jaipur, JAI <br>Arrival: 6:01 PM - Varanasi, VNS </li>
+      <li data-from="Goa, GOI" data-to="Kolkata, CCU" onclick="redirectToAirplane(this)"><strong>Flight AI-317</strong><br>Departure: 4:42 PM - Goa, GOI <br>Arrival: 7:10 PM - Kolkata, CCU </li>
+      <li data-from="Guwahati, GAU" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight UK-942</strong><br>Departure: 7:14 AM - Guwahati, GAU <br>Arrival: 9:31 AM - Delhi, DEL </li>
+      <li data-from="Bhubaneswar, BBI" data-to="Chennai, MAA" onclick="redirectToAirplane(this)"><strong>Flight UK-851</strong><br>Departure: 3:33 PM - Bhubaneswar, BBI <br>Arrival: 5:39 PM - Chennai, MAA </li>
+      <li data-from="Visakhapatnam, VTZ" data-to="Pune, PNQ" onclick="redirectToAirplane(this)"><strong>Flight 6E-357</strong><br>Departure: 8:02 AM - Visakhapatnam, VTZ <br>Arrival: 12:00 PM - Pune, PNQ </li>
+      <li data-from="Lucknow, LKO" data-to="Goa, GOI" onclick="redirectToAirplane(this)"><strong>Flight SG-272</strong><br>Departure: 2:07 PM - Lucknow, LKO <br>Arrival: 4:49 PM - Goa, GOI </li>
+      <li data-from="Patna, PAT" data-to="Guwahati, GAU" onclick="redirectToAirplane(this)"><strong>Flight 6E-522</strong><br>Departure: 3:20 PM - Patna, PAT <br>Arrival: 6:48 PM - Guwahati, GAU </li>
+      <li data-from="Goa, GOI" data-to="Varanasi, VNS" onclick="redirectToAirplane(this)"><strong>Flight SG-110</strong><br>Departure: 9:07 AM - Goa, GOI <br>Arrival: 11:11 AM - Varanasi, VNS </li>
+      <li data-from="Dehradun, DED" data-to="Kochi, COK" onclick="redirectToAirplane(this)"><strong>Flight UK-535</strong><br>Departure: 3:54 PM - Dehradun, DED <br>Arrival: 6:37 PM - Kochi, COK </li>
+      <li data-from="Chandigarh, IXC" data-to="Patna, PAT" onclick="redirectToAirplane(this)"><strong>Flight IX-389</strong><br>Departure: 7:20 AM - Chandigarh, IXC <br>Arrival: 10:02 AM - Patna, PAT </li>
+      <li data-from="Kolkata, CCU" data-to="Patna, PAT" onclick="redirectToAirplane(this)"><strong>Flight SG-121</strong><br>Departure: 11:33 AM - Kolkata, CCU <br>Arrival: 12:33 PM - Patna, PAT </li>
+      <li data-from="Amritsar, ATQ" data-to="Kolkata, CCU" onclick="redirectToAirplane(this)"><strong>Flight IX-760</strong><br>Departure: 9:08 AM - Amritsar, ATQ <br>Arrival: 11:57 AM - Kolkata, CCU </li>
+      <li data-from="Hyderabad, HYD" data-to="Dehradun, DED" onclick="redirectToAirplane(this)"><strong>Flight SG-241</strong><br>Departure: 12:45 PM - Hyderabad, HYD <br>Arrival: 2:33 PM - Dehradun, DED </li>
+      <li data-from="Jaipur, JAI" data-to="Amritsar, ATQ" onclick="redirectToAirplane(this)"><strong>Flight SG-715</strong><br>Departure: 1:55 PM - Jaipur, JAI <br>Arrival: 5:08 PM - Amritsar, ATQ </li>
+      <li data-from="Patna, PAT" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight 6E-802</strong><br>Departure: 5:34 AM - Patna, PAT <br>Arrival: 8:01 AM - Delhi, DEL </li>
+      <li data-from="Varanasi, VNS" data-to="Bengaluru, BLR" onclick="redirectToAirplane(this)"><strong>Flight SG-479</strong><br>Departure: 6:41 AM - Varanasi, VNS <br>Arrival: 9:56 AM - Bengaluru, BLR </li>
+      <li data-from="Indore, IDR" data-to="Mumbai, BOM" onclick="redirectToAirplane(this)"><strong>Flight SG-281</strong><br>Departure: 1:10 PM - Indore, IDR <br>Arrival: 5:09 PM - Mumbai, BOM </li>
+      <li data-from="Hyderabad, HYD" data-to="Dehradun, DED" onclick="redirectToAirplane(this)"><strong>Flight UK-667</strong><br>Departure: 1:21 PM - Hyderabad, HYD <br>Arrival: 3:34 PM - Dehradun, DED </li>
+      <li data-from="Indore, IDR" data-to="Jaipur, JAI" onclick="redirectToAirplane(this)"><strong>Flight 6E-885</strong><br>Departure: 7:00 AM - Indore, IDR <br>Arrival: 10:32 AM - Jaipur, JAI </li>
+      <li data-from="Kolkata, CCU" data-to="Goa, GOI" onclick="redirectToAirplane(this)"><strong>Flight UK-705</strong><br>Departure: 3:47 PM - Kolkata, CCU <br>Arrival: 5:34 PM - Goa, GOI </li>
+      <li data-from="Chennai, MAA" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)"><strong>Flight AI-535</strong><br>Departure: 5:07 AM - Chennai, MAA <br>Arrival: 7:13 AM - Coimbatore, CJB </li>
+      <li data-from="Srinagar, SXR" data-to="Kolkata, CCU" onclick="redirectToAirplane(this)"><strong>Flight 6E-903</strong><br>Departure: 12:50 PM - Srinagar, SXR <br>Arrival: 4:45 PM - Kolkata, CCU </li>
+      <li data-from="Delhi, DEL" data-to="Chandigarh, IXC" onclick="redirectToAirplane(this)"><strong>Flight 6E-847</strong><br>Departure: 2:33 PM - Delhi, DEL <br>Arrival: 4:31 PM - Chandigarh, IXC </li>
+      <li data-from="Dehradun, DED" data-to="Nagpur, NAG" onclick="redirectToAirplane(this)"><strong>Flight SG-651</strong><br>Departure: 4:01 PM - Dehradun, DED <br>Arrival: 6:31 PM - Nagpur, NAG </li>
+      <li data-from="Nagpur, NAG" data-to="Jaipur, JAI" onclick="redirectToAirplane(this)"><strong>Flight 6E-892</strong><br>Departure: 12:13 PM - Nagpur, NAG <br>Arrival: 3:12 PM - Jaipur, JAI </li>
+      <li data-from="Delhi, DEL" data-to="Kochi, COK" onclick="redirectToAirplane(this)"><strong>Flight 6E-259</strong><br>Departure: 4:29 PM - Delhi, DEL <br>Arrival: 5:45 PM - Kochi, COK </li>
+      <li data-from="Patna, PAT" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)"><strong>Flight 6E-870</strong><br>Departure: 5:04 AM - Patna, PAT <br>Arrival: 8:34 AM - Coimbatore, CJB </li>
+      <li data-from="Lucknow, LKO" data-to="Surat, STV" onclick="redirectToAirplane(this)"><strong>Flight UK-683</strong><br>Departure: 8:35 AM - Lucknow, LKO <br>Arrival: 11:27 AM - Surat, STV </li>
+      <li data-from="Coimbatore, CJB" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight SG-415</strong><br>Departure: 9:25 AM - Coimbatore, CJB <br>Arrival: 12:07 PM - Delhi, DEL </li>
+      <li data-from="Mumbai, BOM" data-to="Kolkata, CCU" onclick="redirectToAirplane(this)"><strong>Flight IX-527</strong><br>Departure: 9:43 AM - Mumbai, BOM <br>Arrival: 1:38 PM - Kolkata, CCU </li>
+      <li data-from="Patna, PAT" data-to="Hyderabad, HYD" onclick="redirectToAirplane(this)"><strong>Flight UK-829</strong><br>Departure: 4:37 PM - Patna, PAT <br>Arrival: 8:07 PM - Hyderabad, HYD </li>
+      <li data-from="Mumbai, BOM" data-to="Port Blair, IXZ" onclick="redirectToAirplane(this)"><strong>Flight IX-776</strong><br>Departure: 6:16 AM - Mumbai, BOM <br>Arrival: 8:24 AM - Port Blair, IXZ </li>
+      <li data-from="Coimbatore, CJB" data-to="Nagpur, NAG" onclick="redirectToAirplane(this)"><strong>Flight IX-671</strong><br>Departure: 11:27 AM - Coimbatore, CJB <br>Arrival: 2:58 PM - Nagpur, NAG </li>
+      <li data-from="Port Blair, IXZ" data-to="Kochi, COK" onclick="redirectToAirplane(this)"><strong>Flight SG-516</strong><br>Departure: 4:31 PM - Port Blair, IXZ <br>Arrival: 8:29 PM - Kochi, COK </li>
+      <li data-from="Port Blair, IXZ" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)"><strong>Flight AI-322</strong><br>Departure: 7:20 AM - Port Blair, IXZ <br>Arrival: 10:19 AM - Coimbatore, CJB </li>
+      <li data-from="Coimbatore, CJB" data-to="Kochi, COK" onclick="redirectToAirplane(this)"><strong>Flight UK-302</strong><br>Departure: 3:25 PM - Coimbatore, CJB <br>Arrival: 4:49 PM - Kochi, COK </li>
+      <li data-from="Jaipur, JAI" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)"><strong>Flight AI-968</strong><br>Departure: 5:15 AM - Jaipur, JAI <br>Arrival: 6:41 AM - Coimbatore, CJB </li>
+      <li data-from="Visakhapatnam, VTZ" data-to="Mumbai, BOM" onclick="redirectToAirplane(this)"><strong>Flight FE-932</strong><br>Departure: 3:44 PM - Visakhapatnam, VTZ <br>Arrival: 4:47 PM - Mumbai, BOM </li>
+      <li data-from="Lucknow, LKO" data-to="Pune, PNQ" onclick="redirectToAirplane(this)"><strong>Flight FE-227</strong><br>Departure: 12:54 PM - Lucknow, LKO <br>Arrival: 2:27 PM - Pune, PNQ </li>
+      <li data-from="Amritsar, ATQ" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight FE-248</strong><br>Departure: 10:07 AM - Amritsar, ATQ <br>Arrival: 12:23 PM - Delhi, DEL </li>
+      <li data-from="Amritsar, ATQ" data-to="Nagpur, NAG" onclick="redirectToAirplane(this)"><strong>Flight FE-792</strong><br>Departure: 8:43 AM - Amritsar, ATQ <br>Arrival: 10:16 AM - Nagpur, NAG </li>
+      <li data-from="Surat, STV" data-to="Chennai, MAA" onclick="redirectToAirplane(this)"><strong>Flight FE-536</strong><br>Departure: 2:49 PM - Surat, STV <br>Arrival: 3:49 PM - Chennai, MAA </li>
+      <li data-from="Mumbai, BOM" data-to="Patna, PAT" onclick="redirectToAirplane(this)"><strong>Flight FE-439</strong><br>Departure: 6:27 AM - Mumbai, BOM <br>Arrival: 8:17 AM - Patna, PAT </li>
+      <li data-from="Visakhapatnam, VTZ" data-to="Kolkata, CCU" onclick="redirectToAirplane(this)"><strong>Flight FE-461</strong><br>Departure: 8:09 AM - Visakhapatnam, VTZ <br>Arrival: 9:45 AM - Kolkata, CCU </li>
+      <li data-from="Visakhapatnam, VTZ" data-to="Kochi, COK" onclick="redirectToAirplane(this)"><strong>Flight FE-240</strong><br>Departure: 6:45 AM - Visakhapatnam, VTZ <br>Arrival: 8:02 AM - Kochi, COK </li>
+      <li data-from="Amritsar, ATQ" data-to="Visakhapatnam, VTZ" onclick="redirectToAirplane(this)"><strong>Flight FE-421</strong><br>Departure: 2:24 PM - Amritsar, ATQ <br>Arrival: 5:28 PM - Visakhapatnam, VTZ </li>
+      <li data-from="Bhubaneswar, BBI" data-to="Lucknow, LKO" onclick="redirectToAirplane(this)"><strong>Flight FE-650</strong><br>Departure: 11:53 AM - Bhubaneswar, BBI <br>Arrival: 2:59 PM - Lucknow, LKO </li>
+      <li data-from="Lucknow, LKO" data-to="Dehradun, DED" onclick="redirectToAirplane(this)"><strong>Flight FE-973</strong><br>Departure: 6:37 AM - Lucknow, LKO <br>Arrival: 10:29 AM - Dehradun, DED </li>
+      <li data-from="Delhi, DEL" data-to="Port Blair, IXZ" onclick="redirectToAirplane(this)"><strong>Flight FE-488</strong><br>Departure: 11:24 AM - Delhi, DEL <br>Arrival: 3:04 PM - Port Blair, IXZ </li>
+      <li data-from="Indore, IDR" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight FE-656</strong><br>Departure: 6:56 AM - Indore, IDR <br>Arrival: 10:29 AM - Delhi, DEL </li>
+      <li data-from="Surat, STV" data-to="Pune, PNQ" onclick="redirectToAirplane(this)"><strong>Flight FE-328</strong><br>Departure: 10:35 AM - Surat, STV <br>Arrival: 1:17 PM - Pune, PNQ </li>
+      <li data-from="Patna, PAT" data-to="Ahmedabad, AMD" onclick="redirectToAirplane(this)"><strong>Flight FE-994</strong><br>Departure: 5:50 AM - Patna, PAT <br>Arrival: 9:24 AM - Ahmedabad, AMD </li>
+      <li data-from="Varanasi, VNS" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight FE-603</strong><br>Departure: 9:13 AM - Varanasi, VNS <br>Arrival: 11:44 AM - Delhi, DEL </li>
+      <li data-from="Bengaluru, BLR" data-to="Amritsar, ATQ" onclick="redirectToAirplane(this)"><strong>Flight FE-507</strong><br>Departure: 8:24 AM - Bengaluru, BLR <br>Arrival: 11:33 AM - Amritsar, ATQ </li>
+      <li data-from="Bengaluru, BLR" data-to="Patna, PAT" onclick="redirectToAirplane(this)"><strong>Flight FE-631</strong><br>Departure: 10:08 AM - Bengaluru, BLR <br>Arrival: 11:26 AM - Patna, PAT </li>
+      <li data-from="Delhi, DEL" data-to="Surat, STV" onclick="redirectToAirplane(this)"><strong>Flight FE-256</strong><br>Departure: 11:01 AM - Delhi, DEL <br>Arrival: 1:09 PM - Surat, STV </li>
+      <li data-from="Ranchi, IXR" data-to="Dehradun, DED" onclick="redirectToAirplane(this)"><strong>Flight FE-210</strong><br>Departure: 11:52 AM - Ranchi, IXR <br>Arrival: 2:42 PM - Dehradun, DED </li>
+      <li data-from="Chandigarh, IXC" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)"><strong>Flight FE-407</strong><br>Departure: 7:24 AM - Chandigarh, IXC <br>Arrival: 10:36 AM - Coimbatore, CJB </li>
+      <li data-from="Coimbatore, CJB" data-to="Mumbai, BOM" onclick="redirectToAirplane(this)"><strong>Flight FE-800</strong><br>Departure: 7:39 AM - Coimbatore, CJB <br>Arrival: 9:31 AM - Mumbai, BOM </li>
+      <li data-from="Ranchi, IXR" data-to="Indore, IDR" onclick="redirectToAirplane(this)"><strong>Flight FE-390</strong><br>Departure: 5:41 AM - Ranchi, IXR <br>Arrival: 8:59 AM - Indore, IDR </li>
+      <li data-from="Hyderabad, HYD" data-to="Varanasi, VNS" onclick="redirectToAirplane(this)"><strong>Flight FE-305</strong><br>Departure: 3:35 PM - Hyderabad, HYD <br>Arrival: 6:03 PM - Varanasi, VNS </li>
+      <li data-from="Indore, IDR" data-to="Surat, STV" onclick="redirectToAirplane(this)"><strong>Flight FE-961</strong><br>Departure: 8:36 AM - Indore, IDR <br>Arrival: 12:12 PM - Surat, STV </li>
+      <li data-from="Chennai, MAA" data-to="Coimbatore, CJB" onclick="redirectToAirplane(this)"><strong>Flight FE-875</strong><br>Departure: 10:24 AM - Chennai, MAA <br>Arrival: 12:06 PM - Coimbatore, CJB </li>
+      <li data-from="Nagpur, NAG" data-to="Kochi, COK" onclick="redirectToAirplane(this)"><strong>Flight FE-586</strong><br>Departure: 8:41 AM - Nagpur, NAG <br>Arrival: 10:04 AM - Kochi, COK </li>
+      <li data-from="Patna, PAT" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight FE-793</strong><br>Departure: 10:54 AM - Patna, PAT <br>Arrival: 12:14 PM - Delhi, DEL </li>
+      <li data-from="Visakhapatnam, VTZ" data-to="Thiruvananthapuram, TRV" onclick="redirectToAirplane(this)"><strong>Flight FE-663</strong><br>Departure: 8:18 AM - Visakhapatnam, VTZ <br>Arrival: 10:15 AM - Thiruvananthapuram, TRV </li>
+      <li data-from="Guwahati, GAU" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight FE-676</strong><br>Departure: 3:50 PM - Guwahati, GAU <br>Arrival: 6:35 PM - Delhi, DEL </li>
+      <li data-from="Kochi, COK" data-to="Goa, GOI" onclick="redirectToAirplane(this)"><strong>Flight FE-486</strong><br>Departure: 10:27 AM - Kochi, COK <br>Arrival: 12:05 PM - Goa, GOI </li>
+      <li data-from="Indore, IDR" data-to="Guwahati, GAU" onclick="redirectToAirplane(this)"><strong>Flight FE-887</strong><br>Departure: 12:34 PM - Indore, IDR <br>Arrival: 2:56 PM - Guwahati, GAU </li>
+      <li data-from="Kolkata, CCU" data-to="Ranchi, IXR" onclick="redirectToAirplane(this)"><strong>Flight FE-747</strong><br>Departure: 7:09 AM - Kolkata, CCU <br>Arrival: 8:57 AM - Ranchi, IXR </li>
+      <li data-from="Bengaluru, BLR" data-to="Bhubaneswar, BBI" onclick="redirectToAirplane(this)"><strong>Flight FE-342</strong><br>Departure: 1:24 PM - Bengaluru, BLR <br>Arrival: 4:05 PM - Bhubaneswar, BBI </li>
+      <li data-from="Srinagar, SXR" data-to="Chandigarh, IXC" onclick="redirectToAirplane(this)"><strong>Flight FE-837</strong><br>Departure: 11:20 AM - Srinagar, SXR <br>Arrival: 1:47 PM - Chandigarh, IXC </li>
+      <li data-from="Bhubaneswar, BBI" data-to="Delhi, DEL" onclick="redirectToAirplane(this)"><strong>Flight FE-279</strong><br>Departure: 12:59 PM - Bhubaneswar, BBI <br>Arrival: 3:26 PM - Delhi, DEL </li>
+      <li data-from="Lucknow, LKO" data-to="Bhubaneswar, BBI" onclick="redirectToAirplane(this)"><strong>Flight FE-400</strong><br>Departure: 7:04 AM - Lucknow, LKO <br>Arrival: 9:16 AM - Bhubaneswar, BBI </li>
+      <li data-from="Delhi, DEL" data-to="Hyderabad, HYD" onclick="redirectToAirplane(this)"><strong>Flight FE-331</strong><br>Departure: 12:58 PM - Delhi, DEL <br>Arrival: 3:42 PM - Hyderabad, HYD </li>
+      <li data-from="Hyderabad, HYD" data-to="Goa, GOI" onclick="redirectToAirplane(this)"><strong>Flight FE-953</strong><br>Departure: 8:33 AM - Hyderabad, HYD <br>Arrival: 11:52 AM - Goa, GOI </li>
+    
+    <div id="noFlightsMessage" style="display: none; text-align: center; padding: 20px; color: #555;">
+        No flights found for the selected route.
+    </div>
+    
+    </ul>
+  </div>
+
+<script>
+  // Store search data in localStorage when page loads
+  window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    const from = params.get('from');
+    const to = params.get('to');
+    const departure = params.get('departure');
+    const passengers = params.get('passengers');
+
+    // Store search data
+    const searchData = {
+      from: from,
+      to: to,
+      departure: departure,
+      passengers: passengers
+    };
+    localStorage.setItem('searchData', JSON.stringify(searchData));
+
+    // Update trip info
+    if (from && to) {
+      document.getElementById('tripDetails').innerHTML = `
+        <div>${from} - ${to}      ||
+             ${departure || 'Today'}      ||
+              Passengers-${passengers || '1'}</div>
+      `;
+
+      const heading = document.querySelector('h1');
+      if (heading) {
+        heading.innerHTML = `Choose your preferred flight from <span>${from}</span> to <span>${to}</span>`;
+      }
+    }
+
+    // Show flights container and apply filters
+    const flightsPage = document.getElementById('flightsPage');
+    if (flightsPage) {
+      flightsPage.classList.remove('hidden');
+    }
+    filterFlights();
+    renderDateSelector(departure);
+  };
+
+  function getFormattedDate(date) {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const day = days[date.getDay()];
+    const month = months[date.getMonth()];
+    const dateNum = date.getDate();
+    
+    return {
+      day,
+      month,
+      dateNum,
+      fullDate: date.toISOString().split('T')[0]
+    };
+  }
+
+  function renderDateSelector(selectedDate) {
+    const dateSelector = document.getElementById('dateSelector');
+    const today = new Date();
+    const selected = selectedDate ? new Date(selectedDate) : today;
+    
+    // Generate dates for 3 days (yesterday, today, tomorrow)
+    const dates = [];
+    for (let i = -1; i <= 1; i++) {
+      const date = new Date(selected);
+      date.setDate(date.getDate() + i);
+      dates.push(date);
+    }
+
+    // Clear existing dates
+    dateSelector.innerHTML = '';
+
+    // Add date boxes
+    dates.forEach(date => {
+      const formatted = getFormattedDate(date);
+      const isSelected = date.toDateString() === selected.toDateString();
+      
+      const dateBox = document.createElement('div');
+      dateBox.className = `date-box ${isSelected ? 'active' : ''}`;
+      dateBox.innerHTML = `
+        <div>${formatted.day}</div>
+        <div>${formatted.dateNum}</div>
+        <div>${formatted.month}</div>
+      `;
+      dateBox.onclick = () => selectDate(date);
+      dateSelector.appendChild(dateBox);
+    });
+  }
+
+  function selectDate(date) {
+    const formatted = getFormattedDate(date);
+    const searchData = JSON.parse(localStorage.getItem('searchData') || '{}');
+    searchData.departure = formatted.fullDate;
+    localStorage.setItem('searchData', JSON.stringify(searchData));
+    
+    // Update trip info with new date
+    const tripDetails = document.getElementById('tripDetails');
+    if (tripDetails) {
+      const parts = tripDetails.innerHTML.split('||');
+      parts[1] = ` ${formatted.fullDate} `;
+      tripDetails.innerHTML = parts.join('||');
+    }
+    
+    renderDateSelector(date);
+  }
+
+  function filterFlights() {
+    const searchData = JSON.parse(localStorage.getItem('searchData') || '{}');
+    let fromCity = searchData.from ? searchData.from.split(',')[0].trim().toLowerCase() : "";
+    let toCity = searchData.to ? searchData.to.split(',')[0].trim().toLowerCase() : "";
+    
+    console.log('Filtering for:', fromCity, 'to', toCity); // Debug log
+    
+    let flights = document.querySelectorAll(".flights-list li");
+    let hasFlights = false; // Initialize to false
+
+    const noFlightsMessage = document.getElementById('noFlightsMessage'); // Get the message element
+
+    flights.forEach(flight => {
+        let flightFrom = flight.getAttribute("data-from").split(',')[0].trim().toLowerCase();
+        let flightTo = flight.getAttribute("data-to").split(',')[0].trim().toLowerCase();
+        
+        console.log('Checking flight:', flightFrom, 'to', flightTo); // Debug log
+
+        if ((fromCity === "" || flightFrom.includes(fromCity)) && 
+            (toCity === "" || flightTo.includes(toCity))) {
+            flight.style.display = "block";
+            hasFlights = true; // Set to true if at least one flight is visible
+        } else {
+            flight.style.display = "none";
+        }
+    });
+
+    // Add random prices to visible flights
+    document.querySelectorAll(".flights-list li").forEach(flight => {
+      if (flight.style.display !== "none") {
+        const priceInfo = flight.querySelector('.price-info');
+        if (!priceInfo) {
+          const price = Math.floor(Math.random() * 5000) + 3000;
+          const priceDiv = document.createElement('div');
+          priceDiv.className = 'price-info';
+          priceDiv.textContent = `₹${price}`;
+          flight.appendChild(priceDiv);
+        }
+      }
+    });
+
+    // Show/hide the "no flights" message based on hasFlights
+    if (hasFlights) {
+        noFlightsMessage.style.display = "none"; // Hide the message if flights are found
+    } else {
+        noFlightsMessage.style.display = "block"; // Show the message if no flights are found
+    }
+}
+
+
+
+  function redirectToAirplane(element) {
+    const flightData = {
+      from: element.getAttribute('data-from'),
+      to: element.getAttribute('data-to'),
+      flightNumber: element.querySelector('strong').textContent,
+      departure: element.textContent.match(/Departure: (.*?) -/)[1],
+      arrival: element.textContent.match(/Arrival: (.*?) -/)[1]
+    };
+    
+    localStorage.setItem('selectedFlight', JSON.stringify(flightData));
+    window.location.href = 'airplane.html';
+  }
+
+  // Update trip info when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const from = urlParams.get('from') || 'Delhi';
+    const to = urlParams.get('to') || 'Mumbai';
+    const departure = urlParams.get('departure') || 'Today';
+    const passengers = urlParams.get('passengers') || '1';
+
+    document.querySelector('header h1 span:first-child').textContent = from;
+    document.querySelector('header h1 span:last-child').textContent = to;
+    
+    const tripDetails = document.getElementById('tripDetails');
+    tripDetails.innerHTML = `
+      <div>${from} → ${to}</div>
+      <div>${departure}</div>
+      <div>${passengers} Passenger(s)</div>
+    `;
+  });
+</script>
+</body>
+</html>

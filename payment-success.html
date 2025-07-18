@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Success - FlyEast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f6ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .success-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .booking-details {
+            text-align: left;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .booking-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .detail-row strong {
+            color: #333;
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: #ff5252;
+        }
+
+        .home-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: transparent;
+            color: #666;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            font-size: 16px;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .home-btn:hover {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">FlyEast ✈</div>
+    </div>
+
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1 class="success-title">Payment Successful!</h1>
+        <p class="success-message">Your flight has been booked successfully. A confirmation email has been sent to your registered email address.</p>
+
+        <div class="booking-details">
+            <h3>Booking Details</h3>
+            <div id="bookingInfo">
+                </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="#" class="download-btn" onclick="downloadTicket()">Download Ticket</a>
+            <a href="index.html" class="home-btn">Back to Home</a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function updateBookingInfo() {
+            const flightDetails = JSON.parse(localStorage.getItem('selectedFlight') || '{}');
+            const passengerData = JSON.parse(localStorage.getItem('passengerData') || '[]');
+            const searchData = JSON.parse(localStorage.getItem('searchData') || '{}');
+
+            const bookingInfo = document.getElementById('bookingInfo');
+            
+            if (flightDetails.from && flightDetails.to) {
+                const totalAmount = 5000 * passengerData.length;
+                const taxesFees = totalAmount * 0.18;
+                const finalTotal = totalAmount + taxesFees;
+
+                bookingInfo.innerHTML = `
+                    <div class="detail-row">
+                        <span>Flight Number:</span>
+                        <strong>${flightDetails.flightNumber}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>From:</span>
+                        <strong>${flightDetails.from}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>To:</span>
+                        <strong>${flightDetails.to}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Departure:</span>
+                        <strong>${flightDetails.departure}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Arrival:</span>
+                        <strong>${flightDetails.arrival}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Passengers:</span>
+                        <strong>${passengerData.length}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Total Amount:</span>
+                        <strong>₹${finalTotal.toLocaleString()}</strong>
+                    </div>
+                `;
+            }
+        }
+
+        async function downloadTicket() {
+            const { jsPDF } = window.jspdf;
+            const flightDetails = JSON.parse(localStorage.getItem('selectedFlight') || '{}');
+            const passengerData = JSON.parse(localStorage.getItem('passengerData') || '[]');
+            const seatSelections = JSON.parse(localStorage.getItem('seatSelections') || '[]');
+
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const margin = 20;
+            let y = margin;
+
+            // Header
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(24);
+            doc.setTextColor(255, 107, 107); // Red color
+            doc.text('FlyEast ✈', margin, y);
+            y += 15;
+
+            doc.setFontSize(18);
+            doc.setTextColor(51, 51, 51); // Dark grey
+            doc.text('E-Ticket Confirmation', margin, y);
+            y += 20;
+
+            // Flight Details
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Flight Details', margin, y);
+            y += 7;
+            doc.setLineWidth(0.5);
+            doc.line(margin, y, 190 - margin, y); // Horizontal line
+            y += 5;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            doc.text(`Flight Number: ${flightDetails.flightNumber || '-'}`, margin, y); y += 7;
+            doc.text(`From: ${flightDetails.from || '-'}`, margin, y); y += 7;
+            doc.text(`To: ${flightDetails.to || '-'}`, margin, y); y += 7;
+            doc.text(`Departure: ${flightDetails.departure || '-'}`, margin, y); y += 7;
+            doc.text(`Arrival: ${flightDetails.arrival || '-'}`, margin, y); y += 7;
+            doc.text(`Date: ${new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, y); y += 10;
+
+            // Passenger Details
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('Passenger Details', margin, y);
+            y += 7;
+            doc.setLineWidth(0.5);
+            doc.line(margin, y, 190 - margin, y); // Horizontal line
+            y += 5;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            passengerData.forEach((passenger, index) => {
+                const seatInfo = seatSelections.find(s => s.passenger === index + 1);
+                doc.text(`Passenger ${index + 1}: ${passenger.firstName} ${passenger.lastName}`, margin, y); y += 5;
+                doc.text(`  Gender: ${passenger.gender}`, margin + 5, y); y += 5;
+                doc.text(`  DOB: ${passenger.dob || 'N/A'}`, margin + 5, y); y += 5;
+                doc.text(`  Seat: ${seatInfo ? `${seatInfo.section} Section - ${seatInfo.seatType} Seat` : 'Not assigned'}`, margin + 5, y); y += 10;
+            });
+
+            // Payment Summary
+            const totalAmount = 5000 * passengerData.length;
+            const taxesFees = totalAmount * 0.18;
+            const finalTotal = totalAmount + taxesFees;
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('Payment Summary', margin, y);
+            y += 7;
+            doc.setLineWidth(0.5);
+            doc.line(margin, y, 190 - margin, y); // Horizontal line
+            y += 5;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            doc.text(`Base Fare: ₹${totalAmount.toLocaleString('en-IN')}`, margin, y); y += 7; 
+            doc.text(`Taxes & Fees: ₹${taxesFees.toLocaleString('en-IN')}`, margin, y); y += 7;
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Total Paid: ₹${finalTotal.toLocaleString('en-IN')}`, margin, y); y += 15;
+
+            // Footer
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'italic');
+            doc.setTextColor(102, 102, 102); // Grey
+            doc.text('Thank you for choosing FlyEast for your journey! Have a safe flight.', margin, doc.internal.pageSize.height - 15);
+            doc.text('This is an auto-generated ticket. No signature is required.', margin, doc.internal.pageSize.height - 10);
+
+            doc.save('FlyEast_Ticket.pdf');
+        }
+
+        // Update booking info when page loads
+        document.addEventListener('DOMContentLoaded', updateBookingInfo);
+    </script>
+</body>
+</html>
